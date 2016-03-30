@@ -6,8 +6,6 @@
 package bg.visit_s;
 
 import java.util.ArrayList;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  *
@@ -41,41 +39,6 @@ public class VTResultList {
 
     public void setError_str( String error_str ){
         this.error_str = error_str;
-    }
-
-    public static void main( String[] args ){
-
-        JSONArray array = new JSONArray();
-
-        JSONObject json = new JSONObject();
-
-        json.put( "key", "value" );
-        json.put( "key1", "value1" );
-
-        array.add( json );
-
-        json = new JSONObject();
-
-        json.put( "key", "value" );
-        json.put( "key1", "value1" );
-
-        array.add( json );
-        
-        json = new JSONObject();
-
-        json.put( "key", "value" );
-        json.put( "key1", "value1" );
-
-        array.add( json );
-        
-        JSONObject finalOb = new JSONObject();
-        finalOb.put( "type", "1" );
-        finalOb.put( "arr", array );
-
-        System.out.println( "json.toString() = " + json.toString() );
-        System.out.println( "array.toString() = " + array.toString() );
-        System.out.println( "finalOb.toString() = " + finalOb.toString() );
-
     }
 
 }
