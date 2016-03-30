@@ -15,19 +15,22 @@ import net.sf.json.JSONSerializer;
  * @author Todor
  */
 public class ServerHelper {
-    
+
     /**
-     * 
+     *
      * @param text
-     * @param info 
+     * @param info
      */
     public static void readJSON( String text, ClientInfo info ){
-
+        
         try {
             JSONObject json = (JSONObject) JSONSerializer.toJSON( text );
-
+            
             String tip = json.getString( "type" );
-
+            
+            
+            System.out.println( "tip = " + tip );
+            
             switch( tip ){
                 case VTCountries.GET_LST: {
                     JSonHelper.vtCountryGetList( info );
@@ -37,13 +40,22 @@ public class ServerHelper {
                     JSonHelper.vtCitiesGetList( info );
                     break;
                 }
-
+                case VTSecretQuesion.GET_LST: {
+                    JSonHelper.vtSecretQuesion( info );
+                    break;
+                }
+                
+                case VTUser.GET_AddDelMod: {
+                    JSonHelper.vtAddDelModUser( info, json );
+                    break;
+                }
+                
                 default: {
                     //някаква грешка да им върнем
                     break;
                 }
             }
-
+            
         } catch( JSONException e ) {
             //някаква грешка да им върнем
         }

@@ -5,10 +5,7 @@
  */
 package bg.visit_s;
 
-import bg.visit.VTCities;
-import bg.visit.VTCitiesQ;
-import bg.visit.VTCountries;
-import bg.visit.VTCountriesQ;
+import bg.visit.*;
 import bg.visit.VTUser;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -20,6 +17,45 @@ import java.util.ArrayList;
  * @author Todor
  */
 public class ConnectionHelper {
+
+    public static VTResultList vtSecretQuesion( VTSecretQuesionQ q ){
+
+        VTResultList result = new VTResultList();
+
+        ArrayList<VTSecretQuesion> arr = new ArrayList<>();
+        try {
+            Statement st = Connection.conn.createStatement();
+
+            String query = "select sq.id,sq.code,sq.question_bg "
+                           + "from vt_secret_questions sq";
+
+            ResultSet res = st.executeQuery( query );
+
+            while( res.next() ){
+
+                VTSecretQuesion city = new VTSecretQuesion();
+
+                int col_index = 1;
+
+                city.setId( res.getInt( col_index++ ) );
+                city.setCode( res.getString( col_index++ ).charAt( 0 ) );
+                city.setQuestion_bg( res.getString( col_index++ ) );
+                arr.add( city );
+            }
+
+            result.setError( 0 );
+            result.setResult( arr );
+
+            return result;
+
+        } catch( Exception e ) {
+
+            result.setError( -1 );
+            result.setError_str( e.getMessage() );
+
+            return result;
+        }
+    }
 
     public static VTResultList vtCityGetList( VTCitiesQ q ){
 
@@ -137,42 +173,86 @@ public class ConnectionHelper {
         return users;
     }
 
-    public int insertUser( VTUser user ){
+    public static VTResultList vtAddDelModUser( VTAddDelMod addDelMod ){
+
+        VTResultList result = new VTResultList();
+
         try {
             Statement st = Connection.conn.createStatement();
 
-            int val = st.executeUpdate( "insert into vt_users "
-                                        + "values "
-                                        + "('"
-                                        + user.getFirstName() //userName
-                                        + "','"
-                                        + user.getLastName() //password
-                                        + "','"
-                                        + user.getEmail() //firstName
-                                        + "','"
-                                        + user.getPassword() //lastName
-                                        + "','"
-                                        + user.getIdCity() //email
-                                        + "','"
-                                        + user.getIdCountry() //number
-                                        + "','"
-                                        + user.getGender() //gender
-                                        + "','"
-                                        + user.getIdSecretQuestion() //birthDay
-                                        + "','"
-                                        + user.getAnswer() //birthDay
-                                        + "','"
-                                        + user.getTimeins() //birthDay
-                                        + "','"
-                                        + user.getTimemod() //birthDay
-                                        + "')" );
+            ArrayList add = addDelMod.getAdd();
 
-            return val;
+            ArrayList id_arr = new ArrayList();
+
+            for( VTUser user : (ArrayList<VTUser>) add ){
+
+                user.setTimeins( new Date( System.currentTimeMillis() ) );
+                user.setTimemod( new Date( System.currentTimeMillis() ) );
+                
+                String query = "insert into vt_users (firstname,lastname,email,user_password,id_city,id_country,gender,age,id_secret_question,answer,timeins,timemod) "
+                                            + "values "
+                                            + "('"
+                                            + user.getFirstName() //userName
+                                            + "','"
+                                            + user.getLastName() //password
+                                            + "','"
+                                            + user.getEmail() //firstName
+                                            + "','"
+                                            + user.getPassword() //lastName
+                                            + "','"
+                                            + user.getIdCity() //email
+                                            + "','"
+                                            + user.getIdCountry() //number
+                                            + "','"
+                                            + user.getGender() //gender
+                                            + "','"
+                                            + user.getAge()
+                                            + "','"
+                                            + user.getIdSecretQuestion() //birthDay
+                                            + "','"
+                                            + user.getAnswer() //birthDay
+                                            + "','"
+                                            + user.getTimeins() //birthDay
+                                            + "','"
+                                            + user.getTimemod() //birthDay
+                                            + "')" ;
+                
+                System.out.println( "query = " + query );
+                
+
+                int val = st.executeUpdate(query );
+                
+                user.setId( val );
+
+                
+            }
+
+            ResultSet rs = st.getGeneratedKeys();
+            
+            int counter = 0;
+            if( rs.next() ){
+                // Retrieve the auto generated key(s).
+                int key = rs.getInt( 1 );
+                
+                VTUser user = (VTUser)add.get( counter );
+                user.setId( key );
+                id_arr.add( user );
+                
+                counter++;
+            }
+
+            result.setError( 0 );
+            result.setResult( id_arr );
+
+            return result;
         } catch( Exception e ) {
-            e.printStackTrace();
+
+            result.setError( -1 );
+            result.setError_str( e.getMessage() );
+
+            return result;
         }
 
-        return -1;
     }
 
 }
