@@ -5,10 +5,7 @@
  */
 package bg.visit_s;
 
-import bg.visit.VTCities;
-import bg.visit.VTCities;
-import bg.visit.VTCountries;
-import bg.visit.VTCountries;
+import bg.visit.*;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -20,7 +17,7 @@ import net.sf.json.JSONSerializer;
 public class ServerHelper {
     
     /**
-     * Това ще е голям switch с всички възможни извиквания към сървъра
+     * 
      * @param text
      * @param info 
      */
@@ -48,7 +45,7 @@ public class ServerHelper {
             }
 
         } catch( JSONException e ) {
-            //да върнем някаква грешка
+            //някаква грешка да им върнем
         }
     }
     

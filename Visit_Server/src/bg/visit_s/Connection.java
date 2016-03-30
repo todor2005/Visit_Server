@@ -24,6 +24,7 @@ public class Connection {
     public void connect(){
         try {
             conn = DriverManager.getConnection( url + dbName, userName, password );
+            System.out.println( "Connection to DB is successfull" );
         } catch( Exception e ) {
             e.printStackTrace();
         }
