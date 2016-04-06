@@ -188,56 +188,54 @@ public class ConnectionHelper {
 
                 user.setTimeins( new Date( System.currentTimeMillis() ) );
                 user.setTimemod( new Date( System.currentTimeMillis() ) );
-                
-                String query = "insert into vt_users (firstname,lastname,email,user_password,id_city,id_country,gender,age,id_secret_question,answer,timeins,timemod) "
-                                            + "values "
-                                            + "('"
-                                            + user.getFirstName() //userName
-                                            + "','"
-                                            + user.getLastName() //password
-                                            + "','"
-                                            + user.getEmail() //firstName
-                                            + "','"
-                                            + user.getPassword() //lastName
-                                            + "','"
-                                            + user.getIdCity() //email
-                                            + "','"
-                                            + user.getIdCountry() //number
-                                            + "','"
-                                            + user.getGender() //gender
-                                            + "','"
-                                            + user.getAge()
-                                            + "','"
-                                            + user.getIdSecretQuestion() //birthDay
-                                            + "','"
-                                            + user.getAnswer() //birthDay
-                                            + "','"
-                                            + user.getTimeins() //birthDay
-                                            + "','"
-                                            + user.getTimemod() //birthDay
-                                            + "')" ;
-                
-                System.out.println( "query = " + query );
-                
 
-                int val = st.executeUpdate(query );
-                
+                String query = "insert into vt_users (firstname,lastname,email,user_password,id_city,id_country,gender,age,id_secret_question,answer,timeins,timemod) "
+                               + "values "
+                               + "('"
+                               + user.getFirstName() //userName
+                               + "','"
+                               + user.getLastName() //password
+                               + "','"
+                               + user.getEmail() //firstName
+                               + "','"
+                               + user.getPassword() //lastName
+                               + "','"
+                               + user.getIdCity() //email
+                               + "','"
+                               + user.getIdCountry() //number
+                               + "','"
+                               + user.getGender() //gender
+                               + "','"
+                               + user.getAge()
+                               + "','"
+                               + user.getIdSecretQuestion() //birthDay
+                               + "','"
+                               + user.getAnswer() //birthDay
+                               + "','"
+                               + user.getTimeins() //birthDay
+                               + "','"
+                               + user.getTimemod() //birthDay
+                               + "')";
+
+                System.out.println( "query = " + query );
+
+                int val = st.executeUpdate( query );
+
                 user.setId( val );
 
-                
             }
 
             ResultSet rs = st.getGeneratedKeys();
-            
+
             int counter = 0;
             if( rs.next() ){
                 // Retrieve the auto generated key(s).
                 int key = rs.getInt( 1 );
-                
-                VTUser user = (VTUser)add.get( counter );
+
+                VTUser user = (VTUser) add.get( counter );
                 user.setId( key );
                 id_arr.add( user );
-                
+
                 counter++;
             }
 
@@ -248,11 +246,53 @@ public class ConnectionHelper {
         } catch( Exception e ) {
 
             result.setError( -1 );
-            result.setError_str( e.getMessage() );
+            System.out.println( e.getMessage() );
+            if( e.getMessage().equals( "ERROR: duplicate key value violates unique constraint \"vt_users_unique_email\"  Detail: Key (email)=(mail@mail.com) already exists.")){
+                result.setError( -1001 );
+                result.setError_str( "Въведения e-mail вече е регистриран" );
+            }else{
+                result.setError_str( e.getMessage() );
+            }
+            
 
             return result;
         }
 
+    }
+
+    public static VTResultList vtLoginAttempt( String mail, String password ){
+
+        VTResultList result = new VTResultList();
+
+        try {
+            Statement st = Connection.conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            
+
+            String query = "select 1 from vt_users where email = '"
+                           + mail
+                           + "' and user_password = '"
+                           + password
+                           + "'";
+
+            ResultSet res = st.executeQuery( query );
+
+            if( res.first() ){
+
+                result.setError( 0 );
+            } else {
+                result.setError( -1 );
+                result.setError_str( "Грешно потребителско име или парола!" );
+            }
+
+            return result;
+
+        } catch( Exception e ) {
+
+            result.setError( -1 );
+            result.setError_str( e.getMessage() );
+
+            return result;
+        }
     }
 
 }

@@ -50,6 +50,11 @@ public class ServerHelper {
                     break;
                 }
                 
+                case Vars.LOGIN_ATTEMPT: {
+                    JSonHelper.vtLoginAttempt( info, json );
+                    break;
+                }
+                
                 default: {
                     //някаква грешка да им върнем
                     break;
