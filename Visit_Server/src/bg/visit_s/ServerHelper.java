@@ -23,6 +23,8 @@ public class ServerHelper {
      */
     public static void readJSON( String text, ClientInfo info ){
         
+        Connection.checkConnection();
+        
         try {
             JSONObject json = (JSONObject) JSONSerializer.toJSON( text );
             
